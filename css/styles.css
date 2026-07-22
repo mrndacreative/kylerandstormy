@@ -433,8 +433,12 @@ a { color: inherit; text-decoration: none; }
 .fd-section { margin-bottom: clamp(48px,9vh,80px); width: 100%; display: flex; flex-direction: column; align-items: center; }
 .fd-script {
   font-family: var(--f-script); font-weight: 400; color: var(--fig-ink);
-  font-size: clamp(56px,13vw,110px); line-height: .9; margin: 0 0 .4em;
+  font-size: clamp(44px,11vw,92px); line-height: .9; margin: 0 0 .4em;
+  white-space: nowrap; max-width: 100%;
 }
+/* the long "Timeline of the day" heading: keep to one line, only wrap if the
+   viewport is too narrow to fit it */
+.fd-section .fd-script { font-size: clamp(30px, 8vw, 76px); }
 
 /* timeline */
 .fd-timeline {
