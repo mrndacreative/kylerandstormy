@@ -22,14 +22,35 @@
       s.classList.toggle("is-active", s.dataset.scene === name);
     });
 
-    byName[name].scrollTop = 0;
+    var el = byName[name];
+    // clear any leftover inline opacity/visibility (e.g. from the envelope-open
+    // fade) so the CSS .is-active rule controls visibility — otherwise a scene
+    // can come back blank.
+    if (hasGSAP) gsap.killTweensOf(el);
+    el.style.opacity = "";
+    el.style.visibility = "";
+    if (name === "intro") resetIntro();
+
+    el.scrollTop = 0;
     current = name;
     if (!opts.silent) {
       if (history.replaceState) history.replaceState(null, "", "#" + name);
       else location.hash = name;
     }
     if (name === "home") scaleHomeCanvas();
-    reveal(byName[name]);
+    reveal(el);
+  }
+
+  /* restore the intro envelope to its sealed, fully-visible state */
+  function resetIntro() {
+    var stage = document.getElementById("envelopeStage");
+    if (!stage) return;
+    stage.classList.remove("is-opening");
+    var art = stage.querySelector(".env-arrangement");
+    var cta = document.querySelector(".intro-cta2");
+    if (hasGSAP) gsap.killTweensOf([art, cta]);
+    if (art) { art.style.transform = ""; art.style.opacity = ""; art.style.visibility = ""; }
+    if (cta) { cta.style.opacity = ""; cta.style.visibility = ""; }
   }
 
   /* scale every fixed 1442-wide Figma collage canvas to its wrapper width */

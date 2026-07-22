@@ -133,10 +133,11 @@ a { color: inherit; text-decoration: none; }
 /* banner heroes shared by story + details */
 .hero-banner {
   position: relative;
-  height: var(--h-hero);
+  min-height: var(--h-hero);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: clamp(22px,5vh,46px);
+  padding: clamp(34px,7vh,64px) 20px;
   text-align: center;
   color: #fff;
   overflow: hidden;
@@ -165,7 +166,7 @@ a { color: inherit; text-decoration: none; }
 
 /* footer "celebrate" banner (FAQs) */
 .hero-banner--foot {
-  height: var(--h-foot); gap: clamp(16px, 3vh, 44px);
+  min-height: var(--h-foot); gap: clamp(16px, 3vh, 44px);
 }
 .hero-banner.hero-banner--foot .fd-back { position: static; transform: none; left: auto; top: auto; }
 .celebrate-bow {
@@ -267,6 +268,8 @@ a { color: inherit; text-decoration: none; }
   position: relative; width: 100%; max-width: 760px;
   margin: 0 auto; padding: clamp(6px,2vw,24px) 0 clamp(20px,5vh,60px);
 }
+@media (min-width: 768px)  { .home-collage { max-width: 900px; } }
+@media (min-width: 1200px) { .home-collage { max-width: 1040px; } }
 .home-collage-img { display: block; width: 100%; height: auto; }
 .home-collage .hot {
   position: absolute; display: block; cursor: pointer;
@@ -275,8 +278,9 @@ a { color: inherit; text-decoration: none; }
 .home-collage .hot:focus-visible { outline: 2px solid var(--fig-olive); outline-offset: 3px; }
 
 /* bottom banner (we can't wait + names) */
-.home-banner2 { position: relative; height: var(--h-foot); display: flex; align-items: center; justify-content: center; text-align: center; color: #fff; overflow: hidden; }
-.home-banner2 .fd-hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; filter: grayscale(1) brightness(.5); }
+.home-banner2 { position: relative; min-height: var(--h-foot); display: flex; align-items: center; justify-content: center; text-align: center; color: #fff; overflow: hidden; }
+.home-banner2 .fd-hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center 30%; filter: grayscale(1) brightness(.5); }
+.hero-banner--foot .hero-bg { background-position: center 30%; }
 .home-banner2 .fd-hero-bg::after { content:""; position:absolute; inset:0; background: rgba(0,0,0,.3); }
 .home-banner2 .fd-hero-inner { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: clamp(22px,4vh,44px); padding: 40px 20px; }
 .hb-tagline { font-family: var(--f-sans); text-transform: uppercase; letter-spacing: .12em; font-size: clamp(13px,3.4vw,18px); margin: 0; }
@@ -365,8 +369,8 @@ a { color: inherit; text-decoration: none; }
   display: flex; align-items: center; justify-content: center;
   text-align: center; color: #fff;
 }
-.fd-hero { height: var(--h-hero); }
-.fd-rsvp-banner { height: var(--h-foot); }
+.fd-hero { min-height: var(--h-hero); }
+.fd-rsvp-banner { min-height: var(--h-foot); }
 .fd-hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; filter: grayscale(1); }
 .fd-hero .fd-hero-bg::after { content:""; position:absolute; inset:0; background: rgba(0,0,0,.5); }
 .fd-rsvp-banner .fd-hero-bg::after { content:""; position:absolute; inset:0; background: rgba(0,0,0,.32); }
