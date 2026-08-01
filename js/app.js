@@ -11,12 +11,16 @@
   var hasGSAP = typeof window.gsap !== "undefined";
   var opened = false;          // has the envelope been opened this session?
   var current = null;
+  var navStack = [];           // scenes visited, so BACK returns to the previous one
 
   /* ---------- scene routing ---------- */
   function setScene(name, opts) {
     opts = opts || {};
     if (!byName[name]) name = "intro";
     if (name === current) return;
+
+    // remember where we came from (unless this IS a back/silent navigation)
+    if (!opts.back && !opts.silent && current) navStack.push(current);
 
     scenes.forEach(function (s) {
       s.classList.toggle("is-active", s.dataset.scene === name);
@@ -41,6 +45,14 @@
     reveal(el);
   }
 
+  /* BACK — return to the previously visited scene */
+  function goBack() {
+    var prev = navStack.pop();
+    if (!prev || prev === current) prev = (current === "home" ? "intro" : "home");
+    if (prev === "intro") opened = true;   // don't replay the envelope open
+    setScene(prev, { back: true });
+  }
+
   /* restore the intro envelope to its sealed, fully-visible state */
   function resetIntro() {
     var stage = document.getElementById("envelopeStage");
@@ -51,6 +63,21 @@
     if (hasGSAP) gsap.killTweensOf([art, cta]);
     if (art) { art.style.transform = ""; art.style.opacity = ""; art.style.visibility = ""; }
     if (cta) { cta.style.opacity = ""; cta.style.visibility = ""; }
+  }
+
+  /* after switching scenes, scroll a scroll-scene to one of its sections */
+  function scrollToSection(sceneName, secId) {
+    var scene = byName[sceneName];
+    if (!scene) return;
+    var go = function () {
+      var el = scene.querySelector("#" + secId);
+      if (!el) return;
+      var top = el.getBoundingClientRect().top -
+                scene.getBoundingClientRect().top + scene.scrollTop - 16;
+      scene.scrollTop = Math.max(0, top);
+    };
+    // run after the scene is laid out/active
+    requestAnimationFrame(function () { requestAnimationFrame(go); });
   }
 
   /* scale every fixed 1442-wide Figma collage canvas to its wrapper width */
@@ -154,7 +181,12 @@
         var target = el.dataset.goto;
         if (target === "intro") { opened = true; } // don't replay the whole open
         setScene(target);
+        if (el.dataset.section) scrollToSection(target, el.dataset.section);
       });
+    });
+
+    document.querySelectorAll("[data-back]").forEach(function (el) {
+      el.addEventListener("click", function (e) { e.preventDefault(); goBack(); });
     });
 
     // placeholder outbound links — replace href when real URLs are known
