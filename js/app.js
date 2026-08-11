@@ -11,16 +11,14 @@
   var hasGSAP = typeof window.gsap !== "undefined";
   var opened = false;          // has the envelope been opened this session?
   var current = null;
-  var navStack = [];           // scenes visited, so BACK returns to the previous one
 
   /* ---------- scene routing ---------- */
+  /* opts.push  -> add a browser-history entry (forward navigation)
+     opts.silent -> don't touch history (used by popstate / boot) */
   function setScene(name, opts) {
     opts = opts || {};
     if (!byName[name]) name = "intro";
     if (name === current) return;
-
-    // remember where we came from (unless this IS a back/silent navigation)
-    if (!opts.back && !opts.silent && current) navStack.push(current);
 
     scenes.forEach(function (s) {
       s.classList.toggle("is-active", s.dataset.scene === name);
@@ -37,20 +35,29 @@
 
     el.scrollTop = 0;
     current = name;
-    if (!opts.silent) {
-      if (history.replaceState) history.replaceState(null, "", "#" + name);
-      else location.hash = name;
+
+    // keep the browser URL + history in sync so the browser/mouse Back button
+    // walks back through the site instead of leaving it
+    if (!opts.silent && history.pushState) {
+      var url = "#" + name;
+      if (opts.push) history.pushState({ scene: name }, "", url);
+      else history.replaceState({ scene: name }, "", url);
+    } else if (!opts.silent) {
+      location.hash = name;
     }
+
     if (name === "home") scaleHomeCanvas();
     reveal(el);
   }
 
-  /* BACK — return to the previously visited scene */
+  /* forward navigation from a tile / link — adds a history entry */
+  function goTo(name) { setScene(name, { push: true }); }
+
+  /* BACK — just step back through browser history (works with the browser's
+     own Back button and the mouse back button too) */
   function goBack() {
-    var prev = navStack.pop();
-    if (!prev || prev === current) prev = (current === "home" ? "intro" : "home");
-    if (prev === "intro") opened = true;   // don't replay the envelope open
-    setScene(prev, { back: true });
+    if (history.length > 1) history.back();
+    else setScene(current === "home" ? "intro" : "home", { push: true });
   }
 
   /* restore the intro envelope to its sealed, fully-visible state */
@@ -118,7 +125,7 @@
 
   /* ---------- envelope opening ---------- */
   function openEnvelope() {
-    if (opened) { setScene("home"); return; }
+    if (opened) { goTo("home"); return; }
     opened = true;
 
     var stage = document.getElementById("envelopeStage");
@@ -143,7 +150,7 @@
     clearTimeout(window._openT);
     var intro = byName.intro;
     if (intro) { intro.style.opacity = ""; intro.style.visibility = ""; }
-    setScene("home");
+    goTo("home");
   }
 
   /* ---------- scatter pearls across the home stage ---------- */
@@ -180,7 +187,7 @@
         e.preventDefault();
         var target = el.dataset.goto;
         if (target === "intro") { opened = true; } // don't replay the whole open
-        setScene(target);
+        goTo(target);
         if (el.dataset.section) scrollToSection(target, el.dataset.section);
       });
     });
@@ -199,9 +206,12 @@
       });
     });
 
-    window.addEventListener("hashchange", function () {
+    // browser / mouse Back + Forward buttons
+    window.addEventListener("popstate", function () {
       var name = (location.hash || "").replace("#", "");
-      if (byName[name]) { opened = true; setScene(name, { silent: true }); }
+      if (!byName[name]) name = "intro";
+      opened = true;               // never replay the envelope open on history nav
+      setScene(name, { silent: true });
     });
 
     var rt;
@@ -220,9 +230,9 @@
     var start = (location.hash || "").replace("#", "");
     if (byName[start] && start !== "intro") {
       opened = true;
-      setScene(start, { silent: true });
+      setScene(start);          // establishes the initial history entry (replaceState)
     } else {
-      setScene("intro", { silent: true });
+      setScene("intro");
     }
   }
 

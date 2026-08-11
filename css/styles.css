@@ -151,7 +151,7 @@ a { color: inherit; text-decoration: none; }
 /* Once You're There hero: on desktop the couple sits right-of-centre and the
    centred title covers their faces — zoom slightly and pan so they move left */
 @media (min-width: 768px) {
-  #xoxo .hero-bg { background-size: 122% auto; background-position: 50% 42%; }
+  #once-youre-there .hero-bg { background-size: 122% auto; background-position: 50% 42%; }
 }
 .hero-banner .hero-bg::after {
   content: ""; position: absolute; inset: 0;
@@ -426,7 +426,9 @@ a { color: inherit; text-decoration: none; }
 .fd-intro { max-width: 470px; margin-bottom: clamp(48px,9vh,95px); }
 .fd-desc { max-width: 560px; }
 
-.fd-block { margin-bottom: clamp(48px,9vh,95px); width: 100%; }
+.fd-block { margin-bottom: clamp(24px,4vh,42px); width: 100%; }
+/* a little more breathing room before the first big script section after the events */
+.fd-block + .fd-section { margin-top: clamp(20px,4vh,40px); }
 .fd-caps {
   font-family: var(--f-sans); font-weight: 700; text-transform: uppercase;
   letter-spacing: .11em; font-size: clamp(18px,2.2vw,25px); margin: 0 0 1.1em;
