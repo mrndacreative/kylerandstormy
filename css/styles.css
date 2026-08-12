@@ -532,6 +532,8 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: .1em; font-size: 12.5px; color: var(--fig-ink); margin: 0 0 .35em;
 }
 .hotel-name { font-weight: 700; font-size: 1.06em; margin: 0 0 .35em; }
+.hotel-link { color: var(--fig-ink); text-decoration: underline; text-underline-offset: 2px; }
+.hotel-link:hover { color: var(--fig-mauve); }
 .hotel-tag { font-weight: 400; font-style: italic; color: var(--fig-ink); }
 .hotel-dist { display: block; font-weight: 400; font-size: .82em; color: #6b6b6b; letter-spacing: .02em; }
 .hotel-points { list-style: none; padding: 0; margin: .5em auto 0; text-align: left; display: inline-block; }
